@@ -1,0 +1,941 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Vpass</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+    <!-- Favicons -->
+
+    <link rel="shortcut icon" type="image/png" href="{% static 'dashboard/img/V-Pass-favicon.png' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href=" {% static 'dashboard/css/bootstrap.min.css' %} " rel="stylesheet">
+    <link href=" {% static 'dashboard/css/bootstrap-icons.css' %} " rel="stylesheet">
+    <link href=" {% static 'dashboard/css/style_database.css' %} " rel="stylesheet">
+    <link href=" {% static 'dashboard/css/style.css' %} " rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/responsive/2.4.0/css/responsive.dataTables.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+    <!--link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" /-->
+    <link rel="stylesheet" href="{% static 'admin/css/forms.css' %}">
+
+    <style>
+        #clear-notifications-btn {
+            background-color: #dc3545;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #clear-notifications-btn:hover {
+            background-color: #c82333;
+        }
+
+        #clear-notifications-btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #ff0000;
+        }
+
+        .notification-dropdown {
+            max-height: 600px;
+            /* Adjust the maximum height as needed */
+            overflow-y: auto;
+        }
+
+        .notification-item-clicked {
+            background-color: #f1f1f1;
+            /* Example color for clicked notification */
+        }
+
+        .tool_tip_container {
+            position: relative;
+            width: max-content;
+
+        }
+
+        .tool_tip {
+            position: absolute;
+            translate: -50% 0;
+            top: -105%;
+            background-color: #131313;
+            color: #ededed;
+            padding: 6px 12px;
+            border-radius: 20px;
+            z-index: 1;
+            display: none;
+            width: max-content;
+        }
+
+        .tool_tip.show {
+            display: block;
+        }
+
+        ul {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .footer-section {
+            background: #151414;
+            position: relative;
+        }
+
+        .footer-cta {
+            border-bottom: 1px solid #373636;
+        }
+
+        .single-cta i {
+            color: #ff5e14;
+            font-size: 30px;
+            float: left;
+            margin-top: 8px;
+        }
+
+        .cta-text {
+            padding-left: 15px;
+            display: inline-block;
+        }
+
+        .cta-text h4 {
+            color: #fff;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .cta-text span {
+            color: #757575;
+            font-size: 15px;
+        }
+
+        .footer-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-pattern img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 330px;
+            background-size: cover;
+            background-position: 100% 100%;
+        }
+
+        .footer-logo {
+            margin-bottom: 30px;
+        }
+
+        .footer-logo img {
+            max-width: 200px;
+        }
+
+        .footer-text p {
+            margin-bottom: 14px;
+            font-size: 14px;
+            color: #7e7e7e;
+            line-height: 28px;
+        }
+
+        .footer-social-icon span {
+            color: #fff;
+            display: block;
+            font-size: 20px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 20px;
+        }
+
+        .footer-social-icon a {
+            color: #fff;
+            font-size: 16px;
+            margin-right: 15px;
+        }
+
+        .footer-social-icon i {
+            height: 40px;
+            width: 40px;
+            text-align: center;
+            line-height: 38px;
+            border-radius: 50%;
+        }
+
+        .facebook-bg {
+            background: #3B5998;
+        }
+
+        .twitter-bg {
+            background: #55ACEE;
+        }
+
+        .google-bg {
+            background: #DD4B39;
+        }
+
+        .footer-widget-heading h3 {
+            color: #fff;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .footer-widget-heading h3::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -15px;
+            height: 2px;
+            width: 50px;
+            background: #ff5e14;
+        }
+
+        .footer-widget ul li {
+            display: inline-block;
+            float: left;
+            width: 50%;
+            margin-bottom: 12px;
+        }
+
+        .footer-widget ul li a:hover {
+            color: #ff5e14;
+        }
+
+        .footer-widget ul li a {
+            color: #878787;
+            text-transform: capitalize;
+        }
+
+        .subscribe-form {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .subscribe-form input {
+            width: 100%;
+            padding: 14px 28px;
+            background: #2E2E2E;
+            border: 1px solid #2E2E2E;
+            color: #fff;
+        }
+
+        .subscribe-form button {
+            position: absolute;
+            right: 0;
+            background: #ff5e14;
+            padding: 13px 20px;
+            border: 1px solid #ff5e14;
+            top: 0;
+        }
+
+        .subscribe-form button i {
+            color: #fff;
+            font-size: 22px;
+            transform: rotate(-6deg);
+        }
+
+        .copyright-area {
+            background: #202020;
+            padding: 25px 0;
+        }
+
+        .copyright-text p {
+            margin: 0;
+            font-size: 14px;
+            color: #878787;
+        }
+
+        .copyright-text p a {
+            color: #ff5e14;
+        }
+
+        .footer-menu li {
+            display: inline-block;
+            margin-left: 20px;
+        }
+
+        .footer-menu li:hover a {
+            color: #ff5e14;
+        }
+
+        .footer-menu li a {
+            font-size: 14px;
+            color: #878787;
+        }
+
+        .sidebar-nav {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-item .nav-text {
+            font-size: 1.1rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+        }
+
+        .nav-link.active {
+            background-color: #f77f18;
+            color: white;
+        }
+
+        .nav-link.active:hover {
+            background-color: #f77f18;
+            color: white;
+        }
+
+        .nav-link.active:hover i {
+            color: white;
+        }
+    </style>
+
+    {% block head%}
+    {% endblock %}
+    {% block css %}
+
+    {% endblock %}
+
+</head>
+
+<body>
+
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center justify-content-between">
+        <div style="display: flex; align-items: flex-start;">
+            <span style="margin-right: 10px;">
+                <img src="{% static 'dashboard/img/vpass_logo.png' %}" alt="Profile" height="66px" width="167px"
+                    style="border: 2px solid burlywood; border-radius: 10px; padding: 5px;">
+            </span>
+            <i class="bi bi-list toggle-sidebar-btn" style="align-self: flex-end;"></i>
+        </div>
+
+        <!-- End Search Bar -->
+
+        <nav class="header-nav">
+            <ul class="d-flex align-items-center">
+                <li class="nav-item dropdown ">
+
+                    <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell"></i>
+                        <span class="badge bg-primary badge-number" id="number_of_notifications">0</span>
+                    </a><!-- End Notification Icon -->
+
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications notification-dropdown"
+                        id="notification-list">
+                        <li class="dropdown-header">
+                            You have <span id="number_of_notifications">0</span> new notifications
+                            <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <!-- The notification items will be dynamically added here -->
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li class="dropdown-footer">
+                            <button id="clear-notifications-btn">Clear All Notifications</button>
+                        </li>
+                    </ul><!-- End Notification Dropdown Items -->
+
+                </li>
+                <li class="nav-item dropdown pe-3">
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                        <img src=" {% static 'dashboard/img/icons8-user-30.png' %}" alt="Profile"
+                            class="rounded-circle">
+                        <span class="d-none d-md-block dropdown-toggle ps-2">{{user}}</span>
+                    </a><!-- End Profile Iamge Icon -->
+
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                        <li class="dropdown-header">
+                            <h6>{{user}}</h6>
+                            <!--span>something</span-->
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href=" {% url 'change.password' %} ">
+                                <img src=" {% static 'dashboard/img/icons8-password-key-96.png' %}" alt="Profile"
+                                    class="rounded-circle" height="20px" width="20px">
+                                <span>Change Password</span>
+                            </a>
+                        </li>
+                        <a class="dropdown-item d-flex align-items-center" href=" {% url 'logout' %} ">
+                            <img src=" {% static 'dashboard/img/icons8-log-out-50.png' %}" alt="Profile"
+                                class="rounded-circle" height="20px" width="20px">
+                            <span>Sign Out</span>
+                        </a>
+                    </ul>
+
+                </li>
+
+
+            </ul>
+        </nav><!-- End Icons Navigation -->
+
+    </header><!-- End Header -->
+
+    <!-- ======= Sidebar ======= -->
+    <aside id="sidebar" class="sidebar">
+        <div class="sidebar-toggle-btn">
+            <span class="toggle-icon"></span>
+        </div>
+
+        <ul class="sidebar-nav" id="sidebar-nav">
+            <li class="nav-item">
+                {% url 'analyticsview' as url %}
+                <a class="nav-link collapsed {% if request.path == url %}active{% endif %}"
+                    href="{% url 'analyticsview' %}">
+                    <!--img src=" {% static 'dashboard/img/icons8-web-analytics-50.png' %}" alt="Profile"
+                        class="rounded-circle" height="40px" width="40px"-->
+                    <i class="fa-solid fa-chart-pie fa-lg"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                {% url 'visitor' as url %}
+                <a class="nav-link collapsed {% if request.path == url %}active{% endif %}" href="{% url 'visitor' %}">
+                    <!-- <img src=" {% static 'dashboard/img/icons8-waiting-room-64.png' %}" alt="Profile"
+                        class="rounded-circle" height="38px" width="38px"> -->
+                    <i class="fa-solid fa-user-plus fa-lg"></i>
+                    <span class="nav-text">Add New Visitor</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                {% url 'dashboard' as url %}
+                <a class="nav-link collapsed {% if request.path == url %}active{% endif %}"
+                    href="{% url 'dashboard' %}">
+                    <!-- <img src=" {% static 'dashboard/img/icons8-visitor-form-50.png' %}" alt="Profile"
+                        class="rounded-circle" height="40px" width="40px"> -->
+                    <i class="fa-solid fa-circle-info fa-lg"></i>
+                    <span class="nav-text">Visitor Details</span>
+                </a>
+            </li><!-- End Register Page Nav -->
+
+
+            {% if perms.department.custom_can_view_department%}
+            <li class="nav-item">
+                {% url 'departmentview' as url %}
+                <a class="nav-link collapsed {% if request.path == url %}active{% endif %}"
+                    href="{% url 'departmentview' %}">
+
+                    <!--img src=" {% static 'dashboard/img/icons8-department-100.png' %}" alt="Profile"
+                        class="rounded-circle" height="40px" width="40px"-->
+                    <i class="fa-solid fa-users fa-lg"></i>
+                    <span class="nav-text">Department</span>
+                </a>
+            </li><!-- End Login Page Nav -->
+            {% endif %}
+
+
+            {% if perms.employee.custom_can_view_employee %}
+            <li class="nav-item">
+                {% url 'employeeview' as url %}
+                <a class="nav-link collapsed {% if request.path == url %}active{% endif %}"
+                    href="{% url 'employeeview' %}">
+                    <!-- <img src=" {% static 'dashboard/img/icons8-collaborator-male-50.png' %}" alt="Profile"
+                        class="rounded-circle" height="40px" width="40px"> -->
+                    <i class="fa-solid fa-user-tie fa-lg"></i>
+                    <span class="nav-text">Team Member</span>
+                </a>
+            </li><!-- End Login Page Nav -->
+            {% endif %}
+
+
+
+            {% if perms.visitingpurpose.custom_can_view_visiting_reason %}
+            <li class="nav-item">
+                {% url 'visitingpurpose' as url %}
+                <a class="nav-link collapsed {% if request.path == url %}active{% endif %}"
+                    href="{% url 'visitingpurpose' %}">
+                    <!-- <img src=" {% static 'dashboard/img/icons8-two-goals-48.png' %}" alt="Profile"
+                        class="rounded-circle" height="40px" width="40px"> -->
+                    <i class="fas fa-map-marked-alt fa-lg"></i>
+                    <span class="nav-text">Reason</span>
+                </a>
+            </li><!-- End Register Page Nav -->
+            {% endif %}
+
+            {% if perms.authentication.custom_can_view_permissions %}
+            <li class="nav-item">
+                {% url 'permissions' as url %}
+                <a class="nav-link collapsed {% if request.path == url %}active{% endif %}"
+                    href="{% url 'permissions' %}">
+                    <!-- <img src=" {% static 'dashboard/img/icons8-user-rights-50.png' %}" alt="Profile" class=""
+                        height="40px" width="40px"> -->
+                    <i class="fa-solid fa-user-lock fa-lg"></i>
+                    <span class="nav-text">Permisssion</span>
+                </a>
+            </li>
+            {% endif %}
+
+        </ul>
+
+    </aside><!-- End Sidebar-->
+
+    <main id="main" class="main">
+        <div class="pagetitle pt-4">
+            <h1>{% block pagetitle %}Dashboard{% endblock pagetitle %}</h1>
+
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    {% block pagination %}{% endblock pagination %}
+
+                </ol>
+            </nav>
+        </div><!-- End Page Title -->
+
+        <section class="section dashboard">
+            <div class="row">
+                {% block customdashboard_colspan %}
+                <!-- Left side columns -->
+                <div class="col-lg-8">
+                    <div class="row">
+
+                        <!-- income and expense Card -->
+
+
+                        <!-- Customers Card -->
+
+
+
+                        <div class="col-12">
+
+
+
+                        </div>
+
+                        <!-- Recent Sales -->
+
+
+                        <!-- Top Selling -->
+
+
+                    </div>
+                </div><!-- End Left side columns -->
+                {% endblock customdashboard_colspan %}
+
+                <!-- Right side columns -->
+                <div class="col-lg-4">
+
+                    <!-- Recent Activity -->
+                    {% block recent_activity %}
+
+                    {% endblock recent_activity %}
+
+
+                    <!-- Budget Report -->
+
+
+                    <!-- Website Traffic -->
+                    {% block website_traffic %}
+
+                    {% endblock website_traffic %}
+
+                    <!-- News & Updates Traffic -->
+
+                </div><!-- End News & Updates -->
+
+            </div><!-- End Right side columns -->
+
+            </div>
+            {% block incomeform %}
+
+            {% endblock incomeform %}
+            {% block income_expense %}
+
+            {% endblock income_expense %}
+            {% block recent_sales %}
+
+            {% endblock recent_sales %}
+            {% block date_query %}
+
+            {% endblock date_query %}
+
+
+
+
+        </section>
+
+
+    </main><!-- End #main -->
+
+
+    <!-- ======= Footer ======= -->
+    <!--footer class="footer-section">
+        <div class="container">
+            <div class="footer-cta pt-5 pb-5">
+                <div class="row">
+                    <div class="col-xl-4 col-md-4 mb-30">
+                        <div class="single-cta">
+                            
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div class="cta-text">
+                                <div class="footer-logo">
+                                    <a href="https://www.aamarpay.com/" target="_blank"><img src=" {% static 'dashboard/img/aamarpay_logo.png' %}" class="img-fluid" alt="logo"></a>
+                                </div>
+                                <h4>Think FinTech, Think aamarPay</h4>
+                                <span><div class="footer-text">
+                                    <p>aamarPay Is One Of The Top Leading Online Payment Gateway & FinTech Company Offering Payment Gateway Solution For SME To Large Enterprises. We Offer Both Local & International Payment Accepting Using Various Payment Methods.</p>
+                                </div></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-md-4 mb-30">
+                        <div class="single-cta">
+                            <i class="fas fa-phone"></i>
+                            <div class="cta-text">
+                                <h4>Call us</h4>
+                                <span>9876543210 0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-md-4 mb-30">
+                        <div class="single-cta">
+                            <i class="far fa-envelope-open"></i>
+                            <div class="cta-text">
+                                <h4>Mail us</h4>
+                                <span>mail@info.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--div class="footer-content pt-5 pb-5">
+                <div class="row">
+                    <div class="col-xl-4 col-lg-4 mb-50">
+                        <div class="footer-widget">
+                            
+                            
+                            <div class="footer-social-icon">
+                                <span>Follow us</span>
+                                <a href="#"><i class="fab fa-facebook-f facebook-bg"></i></a>
+                                <a href="#"><i class="fab fa-twitter twitter-bg"></i></a>
+                                <a href="#"><i class="fab fa-google-plus-g google-bg"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-6 mb-30">
+                        <div class="footer-widget">
+                            <div class="footer-widget-heading">
+                                <h3>Useful Links</h3>
+                            </div>
+                            <ul>
+                                <li><a href="#">Home</a></li>
+                                <li><a href="#">about</a></li>
+                                <li><a href="#">services</a></li>
+                                <li><a href="#">portfolio</a></li>
+                                <li><a href="#">Contact</a></li>
+                                <li><a href="#">About us</a></li>
+                                <li><a href="#">Our Services</a></li>
+                                <li><a href="#">Expert Team</a></li>
+                                <li><a href="#">Contact us</a></li>
+                                <li><a href="#">Latest News</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-6 mb-50">
+                        <div class="footer-widget">
+                            <div class="footer-widget-heading">
+                                <h3>Subscribe</h3>
+                            </div>
+                            <div class="footer-text mb-25">
+                                <p>Don’t miss to subscribe to our new feeds, kindly fill the form below.</p>
+                            </div>
+                            <div class="subscribe-form">
+                                <form action="#">
+                                    <input type="text" placeholder="Email Address">
+                                    <button><i class="fab fa-telegram-plane"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright-area">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-8 col-lg-8 text-center text-lg-left">
+                        <div class="copyright-text">
+                            <p>Copyright &copy;  2015 - 2023 | All Rights Reserved. aamarPay | Soft Tech Innovation Ltd.</p>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 text-center text-lg-left">
+                        <div class="copyright-text">
+                            <p>Made with <span class="heart-icon">❤</span> </p>
+                        </div>
+                    </div>
+                 
+                </div>
+            </div>
+        </div>
+    </footer--><!-- End Footer -->
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Vendor JS Files -->
+    <script type="text/javascript" src=" {% static 'dashboard/js/apexcharts.min.js' %} "></script>
+    <script type="text/javascript" src=" {% static 'dashboard/js/bootstrap.bundle.min.js' %} "></script>
+    <script type="text/javascript" src=" {% static 'dashboard/js/chart.min.js' %} "></script>
+    <script type="text/javascript" src=" {% static 'dashboard/js/echarts.min.js' %} "></script>
+    <script type="text/javascript" src=" {% static 'dashboard/js/main.js' %} "></script>
+    <script type="text/javascript" src=" {% static 'dashboard/js/main2.js' %} "></script>
+    <script type="text/javascript" src=" {% static 'dashboard/js/quill.min.js' %} "></script>
+    <script type="text/javascript" src=" {% static 'dashboard/js/simple-datatables.js' %} "></script>
+    <script type="text/javascript" src=" {% static 'dashboard/js/tinymce.min.js' %} "></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.0/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript" src="{% static 'analytics/js/analytics.js' %}"></script>
+    {% block js_script %}
+    {% endblock js_script %}
+    {% load sweetify %}
+    {% sweetify %}
+    <script>
+        // tool tip
+        let tool_tip_container = document.querySelector('.tool_tip_container');
+        let tool_tip = document.querySelector('.tool_tip');
+        tool_tip_container.addEventListener('mouseover', () => {
+            tool_tip.classList.add('show');
+        })
+        tool_tip_container.addEventListener('mouseleave', () => {
+            tool_tip.classList.remove('show');
+        })
+        // nav active
+        // let navItem = document.querySelector('.nav-link');
+        // navItem.addEventListener('click',(e)=>{
+        //     navItem.classList.add('active')
+        //     console.log(e)
+        // })
+        function deleteConfirmation(url) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085D6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
+                confirmButtonClass: 'btn btn-primary',
+                cancelButtonClass: 'btn btn-danger ml-1',
+                buttonsStyling: false,
+            }).then(function (result) {
+                if (result.value) {
+                    window.location.href = url;
+                }
+            })
+        }
+
+    </script>
+    <script>
+        let url = new URL(window.location.href);
+        let roomName = url.hostname.split('.')[0];
+
+        const notifications_socket = new WebSocket(
+            'wss://' + window.location.host + '/ws/notification/' + roomName
+        );
+        const clearNotificationsButton = document.getElementById('clear-notifications-btn');
+
+        clearNotificationsButton.addEventListener('click', () => {
+            // Clear the notifications count
+            notificationsCount = 0;
+            notificationsCountElement.textContent = notificationsCount.toString();
+            saveNotificationsCount();
+
+            // Clear the notifications list
+            notificationList.innerHTML = '';
+
+            // Clear stored notifications in local storage
+            localStorage.removeItem('notifications');
+            localStorage.removeItem('clickedNotifications');
+        });
+
+        const notificationList = document.getElementById('notification-list');
+        const notificationsCountElement = document.getElementById('number_of_notifications');
+        let notificationsCount = parseInt(localStorage.getItem('notificationsCount')) || 0;
+        const saveNotificationsCount = () => {
+            localStorage.setItem('notificationsCount', notificationsCount.toString());
+        };
+        notificationsCountElement.textContent = notificationsCount.toString();
+
+        const handleNotificationClick = (event) => {
+            // Decrement the notifications count
+            notificationsCount = notificationsCount - 1;
+            if (notificationsCount <= 0) {
+                notificationsCount = 0;
+            }
+
+            // Update the notifications count element
+            notificationsCountElement.textContent = notificationsCount.toString();
+
+            // Save the notifications count to local storage
+            saveNotificationsCount();
+
+            // Toggle the clicked state of the notification
+            const notificationId = event.target.parentNode.getAttribute('data-notification-id');
+            toggleNotificationClickedState(notificationId);
+
+            // Toggle the clicked styling class of the notification
+            event.target.parentNode.classList.toggle('notification-item-clicked');
+        };
+
+        const toggleNotificationClickedState = (notificationId) => {
+            const clickedNotifications = JSON.parse(localStorage.getItem('clickedNotifications')) || [];
+            const index = clickedNotifications.indexOf(notificationId);
+            if (index === -1) {
+                clickedNotifications.push(notificationId);
+            } else {
+                clickedNotifications.splice(index, 1);
+            }
+            localStorage.setItem('clickedNotifications', JSON.stringify(clickedNotifications));
+        };
+
+        const isNotificationClicked = (notificationId) => {
+            const clickedNotifications = JSON.parse(localStorage.getItem('clickedNotifications')) || [];
+            return clickedNotifications.includes(notificationId);
+        };
+
+        const retrieveStoredNotifications = () => {
+            const storedNotifications = JSON.parse(localStorage.getItem('notifications')) || [];
+            storedNotifications.forEach((notification) => {
+                const notificationItem = document.createElement('li');
+                notificationItem.className = 'notification-item';
+                if (isNotificationClicked(notification.id)) {
+                    notificationItem.classList.add('notification-item-clicked');
+                }
+                notificationItem.setAttribute('data-notification-id', notification.id);
+                notificationItem.innerHTML = `
+                    <i class="bi bi-exclamation-circle text-warning"></i>
+                    <div>
+                        <h4>${notification.message}</h4>
+                        <p>${notification.timestamp}</p>
+                    </div>
+                `;
+                notificationItem.addEventListener('click', handleNotificationClick);
+                notificationList.insertBefore(notificationItem, notificationList.firstChild);
+            });
+        };
+        function playSound() {
+            const sound = new Audio("{% static 'audio/mixkit-happy-bells-notification-937.wav' %}"); // Path to your notification sound file
+            sound.play();
+        }
+        function displayNotification(notification) {
+            // Check if the browser supports notifications
+            if (!('Notification' in window)) {
+                console.log('Web Notifications not supported');
+                return;
+            }
+            console.log(notification);
+            // Request permission to display notifications
+            Notification.requestPermission().then((permission) => {
+                if (permission === 'granted') {
+                    // Create the notification
+                    const title = "New Visitor Alert!";
+                    const options = {
+                        body: notification,
+                        icon: "{% static 'dashboard/img/V-Pass-favicon.png' %}", // Path to your notification icon
+                        // You can customize other options like badge, image, etc.
+                    };
+                    const notificationObj = new Notification(title, options);
+
+                    // Add click event listener to handle user interaction
+                    notificationObj.addEventListener('click', () => {
+                        // Handle the notification click event (e.g., open the app, redirect to a page, etc.)
+                        // ...
+                    });
+                }
+            });
+        }
+        const incoming_message_from_server_handler = (event) => {
+            const data = JSON.parse(event.data);
+            const messageValue = data.message;
+            //push notifications try
+            displayNotification(messageValue);
+            //push notification sound 
+            playSound();
+
+            notificationsCount++;
+            notificationsCountElement.textContent = notificationsCount.toString();
+            saveNotificationsCount();
+
+            const notificationItem = document.createElement('li');
+            notificationItem.className = 'notification-item';
+            notificationItem.setAttribute('data-notification-id', data.id);
+            notificationItem.innerHTML = `
+                <i class="bi bi-exclamation-circle text-warning"></i>
+                <div>
+                    <h4>${messageValue}</h4>
+                    <p>${new Date().toLocaleString()}</p>
+                </div>
+            `;
+
+            if (isNotificationClicked(data.id)) {
+                notificationItem.classList.add('notification-item-clicked');
+            }
+
+            notificationItem.addEventListener('click', handleNotificationClick);
+            notificationList.insertBefore(notificationItem, notificationList.firstChild);
+
+            const storedNotifications = JSON.parse(localStorage.getItem('notifications')) || [];
+            storedNotifications.unshift({
+                id: data.id,
+                message: messageValue,
+                timestamp: new Date().toLocaleString()
+            });
+            localStorage.setItem('notifications', JSON.stringify(storedNotifications));
+        };
+
+        retrieveStoredNotifications();
+
+        const notifications_socket_close_handler = (event) => {
+            console.log("notification socket closed unexpectedly");
+        };
+
+        notifications_socket.addEventListener('message', incoming_message_from_server_handler);
+        notifications_socket.addEventListener('close', notifications_socket_close_handler);
+    </script>
+
+</body>
+
+</html>

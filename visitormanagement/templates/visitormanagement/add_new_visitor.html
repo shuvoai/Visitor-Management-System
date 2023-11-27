@@ -1,0 +1,186 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block incomeform %}
+{% endblock incomeform %}
+
+{%block pagetitle %}
+Visitor Form
+{% endblock pagetitle %}
+
+{% block pagination %}
+<li class="breadcrumb-item"><a href="{% url 'visitor' %}">Visitor form</a></li>
+{% endblock pagination %}
+
+{% block date_query %}
+
+
+
+
+
+<div class="row ">
+    <div class="col-md-12">
+        <div class="card container">
+            <div class="card-body row d-flex flex-column d-flex align-items-center justify-content-center"
+                id="token_download_html">
+                <h5 class="card-title  align-self-center text-center col-4" id="download_token_h5"></h5>
+                <div>
+                    <a class="d-flex align-items-center justify-content-center" href=" {% url 'tokenpdf' %} "
+                        id="download_token_anchor">
+
+
+                    </a>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock date_query %}
+
+{% block recent_sales %}
+<div class="row ">
+    <div class="col-md-12">
+        <div class="card ">
+            <div class="card-body ">
+                <h2 class="text-center py-4">Add new visitor here<span> </span></h2>
+                <form method="POST" class="form-label d-flex flex-column mx-auto" style="width:65%">
+                    {% csrf_token %}
+                    {{ visitorform.non_field_errors }}
+                    <div
+                        class="fieldWrapper align-self-center pb-4 d-flex w-100 justify-content-between align-items-center">
+                        <div class="me-2">
+                            <img src=" {% static 'dashboard/img/icons8-person-32.png' %}" alt="Profile"
+                                class="rounded-circle" height="30px" width="30px">
+                            {{ visitorform.visitor_name.errors }}
+                            <label for="{{ visitorform.visitor_name.id_for_label }}" style="font-size: larger;">Visitor
+                                Name:</label>
+                        </div>
+                        {{ visitorform.visitor_name }}
+                    </div>
+                    <div
+                        class="fieldWrapper align-self-center pb-4 d-flex w-100 justify-content-between align-items-center">
+                        <div class="me-2">
+                            <img src=" {% static 'dashboard/img/icons8-house-32.png' %}" alt="Profile"
+                                class="rounded-circle" height="30px" width="30px">
+                            {{ visitorform.visitor_address.errors }}
+                            <label for="{{ visitorform.visitor_address.id_for_label }}"
+                                style="font-size: larger;">Visitor
+                                Address:</label>
+                        </div>
+                        {{ visitorform.visitor_address }}
+                    </div>
+                    <!--div class="fieldWrapper">
+                            {{ visitorform.visitor_phone_number.errors }}
+                            <label>Phone Number</label>
+                        </div-->
+                    <div class="fieldWrapper align-self-center pb-2 d-flex w-100 justify-content-between align-items-center"
+                        class="container">
+                        <div class="me-2">
+                            <img src=" {% static 'dashboard/img/icons8-phone-32.png' %}" alt="Profile"
+                                class="rounded-circle" height="30px" width="30px">
+                            <label style="font-size: larger;">Phone Number:</label>
+                        </div>
+                        <div class="">
+                            <div class="d-flex gap-3">
+                                {{ visitorform.visitor_phone_number.subwidgets.0 }}
+                            </div>
+                            <div class="">
+                                {{ visitorform.visitor_phone_number.subwidgets.1 }}
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!--div class="fieldWrapper align-self-center">
+                        {{ visitorform.visitor_phone_number.errors }}
+                        
+                        {{ visitorform.visitor_phone_number.subwidgets.0 }}
+                        <label for="{{ visitorform.visitor_phone_number.id_for_label }}"></label>
+                        <label>Phone Number:</label>
+                        {{ visitorform.visitor_phone_number.subwidgets.1 }}
+                    </div-->
+                    <div
+                        class="fieldWrapper align-self-center pt-4 d-flex w-100 justify-content-between align-items-center">
+                        <div class="me-2">
+                            <img src=" {% static 'dashboard/img/icons8-email-32.png' %}" alt="Profile"
+                                class="rounded-circle" height="30px" width="30px">
+                            {{ visitorform.visitor_email.errors }}
+                            <label for="{{ visitorform.visitor_email.id_for_label }}"
+                                style="font-size: larger;">Email:</label>
+                        </div>
+                        {{ visitorform.visitor_email }}
+                    </div>
+                    <div
+                        class="fieldWrapper align-self-center pt-4 d-flex w-100 justify-content-between align-items-center">
+                        <div class="me-2">
+                            <img src=" {% static 'dashboard/img/icons8-business-building-32.png' %}" alt="Profile"
+                                class="rounded-circle" height="30px" width="30px">
+                            {{ visitorform.visitor_organization.errors }}
+                            <label for="{{ visitorform.visitor_organization.id_for_label }}"
+                                style="font-size: larger;">Visitor's Organization:</label>
+                        </div>
+
+                        {{ visitorform.visitor_organization }}
+                    </div>
+                    <div
+                        class="fieldWrapper align-self-center pt-4 d-flex w-100 justify-content-between align-items-center">
+                        <div class="me-2">
+                            <img src=" {% static 'dashboard/img/icons8-department-32.png' %}" alt="Profile"
+                                class="rounded-circle" height="28px" width="30px">
+                            {{ visitorform.to_which_department.errors }}
+                            <label for="{{ visitorform.to_which_department.id_for_label }}"
+                                style="font-size: larger;">Visiting Department:</label>
+                        </div>
+                        {{ visitorform.to_which_department }}
+
+                    </div>
+
+                    <div
+                        class="fieldWrapper align-self-center pt-4 d-flex w-100 justify-content-between align-items-center">
+                        <div class="me-2">
+                            <img src=" {% static 'dashboard/img/icons8-employee-32.png' %}" alt="Profile"
+                                class="rounded-circle" height="30px" width="30px">
+                            {{ visitorform.to_employee.errors }}
+                            <label for="{{ visitorform.to_employee.id_for_label }}" style="font-size: larger;">Visiting
+                                Person:</label>
+                        </div>
+                        {{ visitorform.to_employee }}
+
+                    </div>
+
+                    <div
+                        class="fieldWrapper align-self-center pt-4 d-flex w-100 justify-content-between align-items-center">
+                        <div class="me-2">
+                            <img src=" {% static 'dashboard/img/icons8-business-32.png' %}" alt="Profile"
+                                class="rounded-circle" height="30px" width="30px">
+                            {{ visitorform.visitor_purpose.errors }}
+                            <label for="{{ visitorform.visitor_purpose.id_for_label }} "
+                                style="font-size: larger;">Visiting
+                                Reason:</label>
+                        </div>
+                        {{ visitorform.visitor_purpose }}
+                    </div>
+
+                    <div class="-center text-center p-4 align-self-center">
+                        <button name="save" type="submit" class="btn btn-success btn-sm" id="visitor_add">Add New
+                            Visitor</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock recent_sales %}
+
+{% block js_script %}
+<script type="text/javascript" src=" {% static 'visitormanagement/js/token_generate.js' %} "></script>
+
+<script>
+    $('.select2').select2();
+</script>
+{% endblock js_script%}

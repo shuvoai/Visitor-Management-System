@@ -1,0 +1,208 @@
+{%  extends  'dashboard/base.html' %}
+{% load static %}
+
+
+
+
+{%block pagetitle %}
+Visitor Details By Date Search
+{% endblock pagetitle %}
+
+{% block pagination %}
+<li class="breadcrumb-item"><a href="{% url 'visitor_details_by_date_search' %}">Visitor</a></li>
+{% endblock pagination %}
+
+
+
+
+<!-- Left side columns -->
+
+
+{% block incomeform %}
+<div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card info-card sales-card">
+
+
+
+                <div class="card-body">
+                    <h5 class="card-title">Number of Visitors <span>| {{date_start}} TO {{date_end}} </span></h5>
+                    <div class="d-flex flex-column">
+                        <h1 class="align-self-center display-1"> {{number_of_visitors}} </h1>
+
+                        {% if visitor_change > 0 %}
+
+                        <span class="text-muted small align-self-center">
+                            <span class="text-success fw-bold ">{{visitor_change}}%</span>
+                            increase from {{previous_month}}
+                        </span>
+                        {% elif visitor_change < 0 %}
+
+                        <span class="text-muted small align-self-center">
+                            <span class="text-danger  fw-bold ">{{visitor_change}}%</span>
+                            decrease from {{previous_month}}
+                        </span>
+
+
+                        {% else  %}
+
+                        <span class="text-muted small align-self-center">
+                            <span class="text-info  fw-bold ">{{visitor_change}}</span>
+
+                        </span>
+                        {% endif %}
+
+                    </div>
+
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock incomeform %}
+
+
+
+<!-- Reports -->
+
+
+
+<!--div></div-->
+
+
+
+
+<!-- Recent Sales -->
+{% block recent_sales %}
+
+<div class="row ">
+    <div class="col-lg-12">
+        <div class="card recent-sales overflow-auto">
+
+            <!--div class="filter">
+            <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start">
+                    <h6>Filter</h6>
+                </li>
+
+                <li><a class="dropdown-item" href="#">Today</a></li>
+                <li><a class="dropdown-item" href="#">This Month</a></li>
+                <li><a class="dropdown-item" href="#">This Year</a></li>
+            </ul>
+        </div-->
+
+            <div class="card-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title">Recent Visitors </h5>
+                        </div>
+                        <div class="col-4 d-flex flex-column justify-content-end">
+                            <a class=" card-title dropdown-item " href=" {% url 'visitor_details_by_date_search_report'%}?page_object={{page_obj}}">
+                                <img src=" {% static 'visitormanagement/img/icons8-export-csv-80.png' %}" alt="pdficon" class="" height="50px" width="50px">
+                                <span>Download  Visitor Details </span>
+                            </a>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+
+                <table class="table table-borderless datatable">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Visitor</th>
+                            <th scope="col">Phone Number</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Address</th>
+                            <th scope="col">Department</th>
+                            <th scope="col">Employee</th>
+                            <th scope="col">Reason</th>
+                            <th scope="col">Date</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for visitor in page_obj %}
+                        <tr>
+                            <th scope="row">{{visitor.pk}} </th>
+                            <td>{{visitor.visitor_name}} </td>
+                            <td>{{visitor.visitor_phone_number|slugify|slice:"2:"|cut:"-" }}</td>
+                            <td>{{visitor.visitor_email}}</td>
+                            <td>{{visitor.visitor_address}}</td>
+                            <td>{{visitor.to_which_department}}</td>
+                            <td>{{visitor.to_employee}}</td>
+                            <td>{{visitor.visitor_purpose}}</td>
+                            <td>{{visitor.visitor_date}}</td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+
+                <!--div class="pagination container">
+                    <span class="step-links ">
+                        {% if page_obj.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                        {% endif %}
+
+                        <span class="current">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                        </span>
+
+                        {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">next</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                        {% endif %}
+                    </span>
+                </div-->
+
+
+
+                {% if page_obj.has_other_pages %}
+                <ul class="pagination justify-content-center" >
+                    {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}" tabindex="-1">Previous</a></li>
+                    {% else %}
+                    <!--li class="disabled" ><span class="page-link">First</span></li-->
+                    {% endif %}
+                    {% for i in page_range %}
+                    {% if page_obj.number == i %}
+                    <li class="page-item active " >
+                        <a class="page-link" href="#"> {{ i }} <span class="sr-only"></span></a>
+                         
+                    {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <li class="page-item"><a href="?page={{ page_obj.next_page_number }}" class="page-link">Next</a></li>
+                    {% else %}
+                    <!--li class="disabled"><span>&raquo;</span></li-->
+                    {% endif %}
+                </ul>
+                {% endif %}
+
+            </div>
+
+        </div>
+    </div><!-- End Recent Sales -->
+</div>
+{% endblock recent_sales %}
+
+<!-- Top Selling -->
+
+
+</div>
+</div><!-- End Left side columns -->

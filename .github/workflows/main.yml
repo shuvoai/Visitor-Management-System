@@ -1,0 +1,59 @@
+name: 🚀 aamarPay bKash Main Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  code_check:
+    name: 🔒 Source Code Check (Flake8)
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛖 Get latest code
+        uses: actions/checkout@v3
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 🧱 Install Dependencies
+        run: |
+          pip install flake8
+          pip install -r requirements.txt
+
+      - name: 👟 Run Flake8
+        run: flake8 --exclude venv,migrations --max-line-length 250 --ignore=F
+
+  cps_bkash_deployment:
+    needs: code_check
+    name: 🎉 Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: 'cps_bkash_deploy'
+
+      - name: 🚚 Adding Known Hosts
+        run: ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: 🚀 Run Deployment Script
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          command_timeout: 30m
+          script: |
+            cd /home/docker_projects/aamarPay-Gateway-bKash
+            mkdir -p logs
+            touch logs/token-log.txt
+            git stash
+            git pull origin main
+            chmod +x deployment/*
+            chmod +x deploy.sh
+            sh deploy.sh

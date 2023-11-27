@@ -1,0 +1,15 @@
+analytics/__pycache__
+authentication/__pycache__
+dashboard/__pycache__
+department/__pycache__
+employee/__pycache__
+employee/__pycache__
+visitingpurpose/__pycache__
+visitor_token/__pycache__
+visitormanagement/__pycache__
+/front-end/
+*/*/__pycache__
+*/*/*/__pycache__
+__pycache__
+.env
+.idea

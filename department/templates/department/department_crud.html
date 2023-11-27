@@ -1,0 +1,394 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+
+{% block incomeform %}
+{% endblock incomeform %}
+
+{%block pagetitle %}
+Department
+{% endblock pagetitle %}
+
+{% block pagination %}
+<li class="breadcrumb-item"><a href="{% url 'departmentview' %}">Department</a></li>
+{% endblock pagination %}
+
+
+
+{% block css %}
+<style>
+    .select2-container .select2-selection--single {
+        height: 37px;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        padding: 3px 0;
+        vertical-align: center;
+    }
+
+    .dataTables_filter input[type="search"] {
+        height: 40px;
+        width: 400px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f1f1f1;
+        transition: background-color 0.3s ease;
+    }
+
+    .dataTables_filter input[type="search"]:focus {
+        outline: none;
+        background-color: #fff;
+    }
+
+    .dataTables_paginate .paginate_button {
+        display: inline-block;
+        padding: 5px 10px;
+        margin: 2px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f1f1f1;
+        color: #333;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .dataTables_paginate .paginate_button:hover {
+        background-color: #e0e0e0;
+    }
+
+    .dataTables_paginate .paginate_button.current {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .custom-info {
+        /* Add your custom styles for the info component here */
+        /* For example: */
+        text-align: center;
+        font-size: 20px;
+        font-family: "Nunito", sans-serif;
+        color: rgb(12, 58, 84);
+    }
+
+    .custom-table {
+        padding-top: 10px;
+    }
+
+    .custom-length select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f1f1f1;
+        transition: background-color 0.3s ease;
+        height: 40px;
+        width: 100px;
+        /* Adjust the width as desired */
+        padding: 8px;
+        border-radius: 4px;
+        color: #333;
+        font-size: 14px;
+        outline: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("{% static 'dashboard/img/icons8-down-arrow-24.png' %}");
+        /* Replace with your arrow icon */
+        background-repeat: no-repeat;
+        background-position: right center;
+        background-size: 16px;
+        padding-right: 15px;
+        /* Adjust based on the width of the arrow icon */
+    }
+
+    .tool_tip_container {
+        position: relative;
+        width: max-content;
+
+    }
+
+    .tool_tip {
+        position: absolute;
+        translate: -50% 0;
+        top: -105%;
+        background-color: #131313;
+        color: #ededed;
+        padding: 6px 12px;
+        border-radius: 20px;
+        z-index: 1;
+        display: none;
+    }
+
+    .tool_tip.show {
+        display: block;
+    }
+
+
+    .card-header,
+    .card-footer {
+        border-color: #ebeef4;
+        background-color: #4e4e4e;
+        color: #ffffff;
+        padding: 15px;
+    }
+
+    .btn {
+        border: #131313 !important;
+    }
+</style>
+{% endblock %}
+
+
+{% block recent_sales %}
+<!--div class="row">
+    <div class="col-12">
+        <div class="card ">
+            <div class="card-body">
+                {% if perms.department.custom_can_add_department%}
+                <h2 class="text-center py-4">Add new Department Details here<span> </span></h2>
+                <form method="POST" action="{% url 'departmentview'  %}" class="form-label ">
+                    {% csrf_token %}
+                    {{ departmentform.non_field_errors }}
+                    <div class="container d-flex flex-column">
+                        <div class="align-self-center">
+                            {{ departmentform.department_name.errors }}
+                            <label for="{{ departmentform.department_name.id_for_label }}">Department name</label>
+                            {{ departmentform.department_name }}
+                        </div>
+                        <div class="align-self-center">
+                            {{ departmentform.department_description.errors }}
+                            <label for="{{ departmentform.department_description.id_for_label }}">Department
+                                details</label>
+                            {{ departmentform.department_description }}
+                        </div>
+
+                        <div class="pt-3 align-self-center">
+                            <button name="save" type="submit" class="btn btn-success btn-sm">Add Department</button>
+                        </div>
+
+                    </div>
+
+
+
+                </form>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</div-->
+
+
+{% endblock recent_sales %}
+
+{% block date_query %}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card recent-sales">
+
+            <div class="card-header d-flex justify-content-between align-items-center ">
+                <div>
+                    <h2>Department Name and Details</h2>
+                </div>
+                <div>
+                    <div class="tool_tip_container">
+                        <button type="submit" class="btn btn-primary btn-sm" style="background: #fe9900;color: #4e4e4e;"
+                            id="new_department_add">Add Department</button>
+                        <div class="tool_tip">
+                            To add new department and details , click here
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row align-items-center" style="
+                    padding-top: 20px">
+                <div class="col" id="custom-filter-div">
+
+                </div>
+
+            </div>
+            <div class="card-body overflow-auto">
+                <table id="department_table" class="table table-striped details table-bordered  table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="text-align: center;">#</th>
+                            <th scope="col" style="text-align: center;">Department Name</th>
+                            <th scope="col" style="text-align: center;">Department Description</th>
+                            <th scope="col" style="text-align: center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+
+                    </tbody>
+                </table>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock date_query %}
+
+{% block recent_activity %}
+{% endblock recent_activity %}
+
+{% block website_traffic %}
+{% endblock website_traffic %}
+{% block js_script %}
+<script type="text/javascript" src="{% static 'employee/js/employee_delete.js' %}"></script>
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    $(document).ready(function () {
+        $('#department_table').DataTable(
+            {
+                dom: '<"row align-items-center"<"col-sm-12 col-md-6 custom-length"l><"col-sm-12 col-md-6 custom-search"f>>' +
+                    '<"row"<"col-sm-12 custom-table"t>>' +
+                    '<"row align-items-center"<"col-sm-12 col-md-6 custom-info"i><"col-sm-12 col-md-6 "p>>',
+                lengthMenu: [10, 25, 50],
+                language: {
+                    lengthMenu: '_MENU_',
+                },
+                "responsive": true,
+                "lengthChange": true,
+                "autoWidth": false,
+                "scrollCollapse": true,
+                "processing": true,
+                "serverSide": true,
+                "paging": true,
+                "ajax": {
+                    "url": '{% url "department.table" %}',
+                    "type": "POST",
+                    "headers": {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-CSRFToken": getCookie("csrftoken"),  // don't forget to include the 'getCookie' function
+                    },
+                    error: (error) => {
+                        console.log(error);
+                    },
+                },
+                language: {
+                    search: "_INPUT_", // Update the default search placeholder text
+                    searchPlaceholder: "Search...", // Placeholder text for the search input
+                    lengthMenu: "_MENU_", // Update the default 'Show X entries' label
+                    info: "Showing _START_ to _END_ of _TOTAL_ entries", // Information about the currently displayed entries
+                    infoEmpty: "Showing 0 to 0 of 0 entries", // Information displayed when there are no entries
+                    zeroRecords: "No matching records found", // Information displayed when no records match the search
+                    paginate: {
+                        first: "First",
+                        last: "Last",
+                        next: "&raquo;",
+                        previous: "&laquo;",
+                    },
+                },
+                columnDefs: [
+                    {
+                        targets: "_all", // Apply the following styles to all columns
+                        className: "align-middle", // Vertically center align cell contents
+                    },
+                    {
+                        targets: [0], // Apply the following styles to the first column (index 0)
+                        width: "100px", // Set a fixed width for the column
+                    },
+                ],
+                initComplete: function () {
+                    // Remove the "top" class from the search input for better alignment
+                    $(".dataTables_filter input[type='search']").removeClass("top");
+                },
+
+            }
+        );
+    });
+    $('.select2').select2(
+        {
+            tags: true
+        }
+    );
+</script>
+<script>
+    const new_department_add_handler = () => {
+        Swal.fire({
+            customClass: {
+                popup: 'animated fadeIn', // Add fade-in animation
+            },
+            allowOutsideClick: false,
+            width: "700px",
+            html: `
+            <div class="card" style="border:2px solid gray;border-radius:10px>
+            <div class="card-body">
+                {% if perms.department.custom_can_add_department%}
+                <h2 class="text-center py-4">Add new department<span> </span></h2>
+                <form method="POST" action="{% url 'departmentview'  %}" class="form-label ">
+                    {% csrf_token %}
+                    {{ departmentform.non_field_errors }}
+                    <div class="container">
+                        <div class="d-flex flex-column align-items-start gap-2">
+                            {{ departmentform.department_name.errors }}
+                            <label for="{{ departmentform.department_name.id_for_label }}" style="font-size:20px">Department name</label>
+                            {{ departmentform.department_name }}
+                        </div>
+                        <div class="d-flex flex-column align-items-start gap-2 mt-2">
+                            {{ departmentform.department_description.errors }}
+                            <label for="{{ departmentform.department_description.id_for_label }}" style="font-size:20px">Department
+                                details</label>
+                            {{ departmentform.department_description }}
+                        </div>
+
+                        <div class="pt-3 pb-3">
+                            <button name="save" type="submit" class="btn btn-success text-white btn-sm pt-2 px-3 ms-auto">Add Department</button>
+                        </div>
+
+                    </div>
+
+
+
+                </form>
+                {% endif %}
+            </div>
+
+        </div>
+
+            `,
+            position: 'top-end',
+            showClass: {
+                popup: `
+      animate__animated
+      animate__fadeInRight
+      animate__faster
+    `
+            },
+            hideClass: {
+                popup: `
+      animate__animated
+      animate__fadeOutRight
+      animate__faster
+    `
+            },
+            grow: 'column',
+            width: "700PX",
+            showConfirmButton: false,
+            showCloseButton: true
+        })
+    }
+    const new_department_add_button = document.querySelector("#new_department_add");
+    new_department_add_button.addEventListener('click', new_department_add_handler);
+</script>
+{% endblock js_script %}

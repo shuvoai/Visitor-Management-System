@@ -1,0 +1,58 @@
+{%  extends  'dashboard/base.html' %}
+{% load static %}
+
+{% block incomeform %}
+{% endblock incomeform %}
+
+{%block pagetitle %}
+Reason
+{% endblock pagetitle %}
+
+{% block pagination %}
+<li class="breadcrumb-item"><a href="{% url 'visitingpurpose' %}">Reason</a></li>
+{% endblock pagination %}
+
+{% block date_query %}
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+<div class="card recent-sales overflow-auto">
+    <div class="card-body">
+        
+        <form method="POST" action="{% url 'visitingpurposeupdatetview' visitingpurpose.pk  %}" class="form-label">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="container d-flex flex-column">
+                <h5 class="card-title align-self-center">Update Purpose Details<span> | {{visitingpurpose.purpose_name | upper}}</span></h5>
+                <div  class="align-self-center" >
+                    {{ form.purpose_name.errors }}
+                    <label for="{{ form.purpose_name.id_for_label }}" >Reason name</label>
+                    {{ form.purpose_name }}
+                </div>
+                
+                <div class="-center text-center p-2">
+                    <button name="save" type="submit" class="btn btn-success btn-sm">Update Details</button>
+                </div>
+
+
+            </div>
+            
+
+
+        </form>
+    </div>
+
+</div>
+</div>
+</div>
+</div>
+{% endblock date_query %}
+
+{% block recent_sales %}
+{% endblock recent_sales %}
+
+{% block recent_activity %}
+{% endblock recent_activity %}
+
+{% block website_traffic %}
+{% endblock website_traffic %}

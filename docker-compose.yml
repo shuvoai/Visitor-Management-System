@@ -1,0 +1,50 @@
+version: '3'
+services:
+  visitor_db:
+    image: postgres:14.5
+    container_name: visitor_db
+    restart: unless-stopped
+    volumes:
+      - .:/app
+      - /home/docker_persistent/visitor_management_system/db:/var/lib/postgresql/data
+    env_file:
+      - .env
+    ports:
+      - '5435:5432'
+
+  visitor_pg_admin:
+    image: dpage/pgadmin4
+    container_name: visitor_pg_admin
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - '5480:80'
+
+  visitor_web:
+    container_name: visitor_web
+    build:
+      context: .
+      dockerfile: DockerFile
+    command: ./deployment/entrypoint
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - '8000:8000'
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+      - /home/docker_persistent/visitor_management_system/static:/app/public/static
+    depends_on:
+      - visitor_db
+    links:
+      - visitor_db
+
+  visitor_redis:
+    container_name: visitor_redis
+    image: redis:alpine
+    restart: always
+    read_only: false
+    command: redis-server --appendonly yes --replica-read-only no

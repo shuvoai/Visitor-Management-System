@@ -1,0 +1,676 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+
+{%block pagetitle %}
+Visitor Details
+{% endblock pagetitle %}
+
+{% block pagination %}
+<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Visitor</a></li>
+{% endblock pagination %}
+
+{% block css %}
+<style>
+    body.swal2-shown > [aria-hidden="true"] {
+        transition: 0.1s filter;
+        filter: blur(3px);
+      }
+    .select2-container .select2-selection--single {
+        height: 37px;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        padding: 3px 0;
+        vertical-align: center;
+    }
+
+    .dataTables_filter input[type="search"] {
+        height: 40px;
+        width: 300px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f1f1f1;
+        transition: background-color 0.3s ease;
+    }
+
+    .dataTables_filter input[type="search"]:focus {
+        outline: none;
+        background-color: #fff;
+    }
+
+    .dataTables_paginate .paginate_button {
+        display: inline-block;
+        padding: 5px 10px;
+        margin: 2px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f1f1f1;
+        color: #333;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .dataTables_paginate .paginate_button:hover {
+        background-color: #e0e0e0;
+    }
+
+    .dataTables_paginate .paginate_button.current {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .custom-info {
+        /* Add your custom styles for the info component here */
+        /* For example: */
+        text-align: center;
+        font-size: 20px;
+        font-family: "Nunito", sans-serif;
+        color: rgb(12, 58, 84);
+    }
+
+    .custom-table {
+        padding-top: 10px;
+    }
+
+    .custom-length select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f1f1f1;
+        transition: background-color 0.3s ease;
+        height: 40px;
+        width: 100px;
+        /* Adjust the width as desired */
+        padding: 8px;
+        border-radius: 4px;
+        color: #333;
+        font-size: 14px;
+        outline: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("{% static 'dashboard/img/icons8-down-arrow-24.png' %}");
+        /* Replace with your arrow icon */
+        background-repeat: no-repeat;
+        background-position: right center;
+        background-size: 16px;
+        padding-right: 15px;
+        /* Adjust based on the width of the arrow icon */
+    }
+
+    .tool_tip_container {
+        position: relative;
+        width: max-content;
+
+    }
+
+    .tool_tip {
+        position: absolute;
+        translate: -50% 0;
+        top: -105%;
+        background-color: #131313;
+        color: #ededed;
+        padding: 6px 12px;
+        border-radius: 20px;
+        z-index: 1;
+        display: none;
+        width: max-content;
+    }
+
+    .tool_tip.show {
+        display: block;
+    }
+
+    .vpass_title {
+        padding: 20px 0 15px 0;
+        font-size: 30px;
+        font-weight: 500;
+        color: #012970;
+        font-family: "Poppins", sans-serif;
+    }
+
+    .button-text {
+        color: #012970;
+        font-size: 1rem;
+    }
+
+    .card-header,
+    .card-footer {
+        border-color: #ebeef4;
+        background-color: #4e4e4e;
+        color: #ffffff;
+        padding: 15px;
+    }
+
+    .details-button {
+        background-color: #4CAF50;
+        /* Green background color */
+        border: none;
+        /* Remove border */
+        color: white;
+        /* Text color */
+        padding: 10px 20px;
+        /* Add padding */
+        text-align: center;
+        /* Center align text */
+        text-decoration: none;
+        /* Remove underline */
+        display: inline-block;
+        /* Make it an inline element */
+        font-size: 16px;
+        /* Adjust font size */
+        border-radius: 4px;
+        /* Add border radius for a rounded button */
+        cursor: pointer;
+        /* Show pointer cursor on hover */
+        transition: background-color 0.3s ease;
+        /* Add a smooth transition */
+    }
+
+    .details-button:hover {
+        background-color: #45a049;
+        /* Darker green on hover */
+    }
+
+    .details-button:focus {
+        outline: none;
+        /* Remove focus outline */
+    }
+
+    .swal2-html-container {
+        z-index: 1;
+        justify-content: center;
+        margin: 1em 1.6em 0.3em;
+        padding: 0;
+        overflow: hidden;
+        color: inherit;
+        font-size: 1.125em;
+        font-weight: normal;
+        line-height: normal;
+        text-align: center;
+        word-wrap: break-word;
+        word-break: break-word;
+    }
+
+    .btn {
+        border: #131313;
+    }
+    
+</style>
+{% endblock %}
+
+
+<!-- Left side columns -->
+
+
+{% block incomeform %}
+<div>
+    <div class="row align-items-center">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body container">
+                    <div class="row align-items-center" style="
+                    padding-top: 20px">
+                        <div class="col" id="custom-filter-div">
+
+                        </div>
+
+                    </div>
+                    <!--h5 class="card-title">Number of Visitors <span>| This Month </span></h5>
+                    <div class="d-flex flex-column">
+                        <h1 class="align-self-center display-1"> {{number_of_visitors}} </h1>
+                        {% if visitor_change > 0 %}
+                        <span class="text-muted small align-self-center">
+                            <span class="text-success fw-bold ">{{visitor_change}}%</span>
+                            increase from {{previous_month}}
+                        </span>
+                        {% elif visitor_change < 0 %}
+                        <span class="text-muted small align-self-center">
+                            <span class="text-danger  fw-bold ">{{visitor_change}}%</span>
+                            decrease from {{previous_month}}
+                        </span>
+                        {% else  %}
+                        <span class="text-muted small align-self-center">
+                            <span class="text-muted  fw-bold ">{{visitor_}}</span>
+                        </span>
+                        {% endif %}
+                    </div-->
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock incomeform %}
+
+
+{% block recent_sales %}
+
+<div class="row ">
+    <div class="col-lg-12">
+        <div class="card recent-sales">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h2>Recent Visitors</h2>
+                </div>
+                <div>
+                    <a class=""
+                        href="{% url 'visitordetailsexcelexport' %}?date={{request.GET.date}}&department={{request.GET.department}}&employee={{request.GET.employee}}&visiting_reason={{ request.GET.visiting_reason }}">
+                        <div class="tool_tip_container">
+                            <button type="submit" class="btn btn-primary btn-sm"
+                                style="background: #fe9900;color: #4e4e4e;">Export</button>
+                            <div class="tool_tip">
+                                Export Visitor Details
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+            <div class="card-body" style="margin-top: 10px;">
+                <table id="myTable" class="table table-striped details table-bordered  table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col" class=" text-center text-sm" class="">Date</th>
+                            <th scope="col" class=" text-center text-sm">Visitor</th>
+                            <th scope="col" class=" text-center text-sm">Phone Number</th>
+                            <th scope="col" class=" text-center text-sm">organization</th>
+                            <th scope="col" class=" text-center text-sm">purpose</th>
+                            <th scope="col" class=" text-center text-sm">Visiting Person</th>
+                            <th scope="col" class=" text-center text-sm">Status</th>
+                            <th scope="col" class=" text-center text-sm">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div><!-- End Recent Sales -->
+
+    {% endblock recent_sales %}
+
+
+
+    {% block js_script %}
+    <script>
+        let tool_tip_container = document.querySelector('.tool_tip_container');
+        let tool_tip = document.querySelector('.tool_tip');
+        tool_tip_container.addEventListener('mouseover', () => {
+            tool_tip.classList.add('show');
+        })
+        tool_tip_container.addEventListener('mouseleave', () => {
+            tool_tip.classList.remove('show');
+        })
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        $(document).ready(function () {
+            $('#myTable').DataTable({
+                dom: '<"row align-items-center"<"col-sm-12 col-md-6 custom-length"l><"col-sm-12 col-md-6 custom-search"f>>' +
+                    '<"row"<"col-sm-12 custom-table"t>>' +
+                    '<"row align-items-center"<"col-sm-12 col-md-6 custom-info"i><"col-sm-12 col-md-6 "p>>',
+                lengthMenu: [10, 25, 50],
+                language: {
+                    lengthMenu: '_MENU_',
+                },
+                responsive: true,
+                lengthChange: true,
+                autoWidth: false,
+                scrollCollapse: true,
+                processing: true,
+                serverSide: true,
+                paging: true,
+                ajax: {
+                    url: '{% url "visitor.data" %}?date={{request.GET.date}}&department={{request.GET.department}}&employee={{request.GET.employee}}&visiting_reason={{ request.GET.visiting_reason }}',
+                    type: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-CSRFToken": getCookie("csrftoken"),
+                    },
+                    error: (error) => {
+                        console.log(error);
+                    },
+                },
+                language: {
+                    search: "_INPUT_", // Update the default search placeholder text
+                    searchPlaceholder: "Search...", // Placeholder text for the search input
+                    lengthMenu: "_MENU_", // Update the default 'Show X entries' label
+                    info: "Showing _START_ to _END_ of _TOTAL_ entries", // Information about the currently displayed entries
+                    infoEmpty: "Showing 0 to 0 of 0 entries", // Information displayed when there are no entries
+                    zeroRecords: "No matching records found", // Information displayed when no records match the search
+                    paginate: {
+                        first: "First",
+                        last: "Last",
+                        next: "&raquo;",
+                        previous: "&laquo;",
+                    },
+                },
+                // Additional styling options
+                columnDefs: [
+                    {
+                        targets: "_all", // Apply the following styles to all columns
+                        className: "align-middle", // Vertically center align cell contents
+                    },
+                    {
+                        targets: [0], // Apply the following styles to the first column (index 0)
+                        width: "100px", // Set a fixed width for the column
+                    },
+                ],
+                initComplete: function () {
+                    // Remove the "top" class from the search input for better alignment
+                    $(".dataTables_filter input[type='search']").removeClass("top");
+                },
+            });
+        });
+
+        let department_list = JSON.parse('{{ department_list|escapejs }}');
+        let department_options = '<option value="">Select Department</option>';
+        department_list.forEach((department) => {
+            if ('{{ selected_department }}' === department['department_name']) {
+                department_options += `<option value="${department['department_name']}" selected>${department['department_name']}</option>`;
+            } else {
+                department_options += `<option value="${department['department_name']}">${department['department_name']}</option>`;
+            }
+        });
+
+        let employee_list = JSON.parse('{{ employee_list|escapejs }}');
+        let employee_options = '<option value="">Select Visiting Person</option>';
+        employee_list.forEach((employee) => {
+            if ('{{ selected_employee }}' === employee['employee_name']) {
+                employee_options += `<option value="${employee['employee_name']}" selected>${employee['employee_name']}</option>`;
+            } else {
+                employee_options += `<option value="${employee['employee_name']}">${employee['employee_name']}</option>`;
+            }
+        });
+
+        let visiting_reason_list = JSON.parse('{{ visiting_reason_list|escapejs }}');
+        let visiting_reason_options = '<option value="">Select Visiting Reason</option>';
+        visiting_reason_list.forEach((visiting_reason) => {
+            if ('{{ selected_visiting_reason }}' === visiting_reason['purpose_name']) {
+                visiting_reason_options += `<option value="${visiting_reason['purpose_name']}" selected>${visiting_reason['purpose_name']}</option>`;
+            } else {
+                visiting_reason_options += `<option value="${visiting_reason['purpose_name']}">${visiting_reason['purpose_name']}</option>`;
+            }
+        });
+
+        let filter_form = `
+    <form action= "" method="get">  
+        <div class="row row-cols-lg-5 row-cols-1 align-items-center justify-content-center gy-2">
+            <div class="form-group col">
+                <input type="text" class="form-control float-right" id="reservation" name="date" required>
+            </div>
+            <div class="form-group col">
+                <select class="select2 form-control" name="department">
+                    ${department_options}
+                </select>
+            </div>
+            <div class="form-group col">
+                <select class="select2 form-control" name="employee">
+                    ${employee_options}
+                </select>
+            </div>
+            <div class="form-group col">
+                <select class="select2 form-control" name="visiting_reason">
+                    ${visiting_reason_options}
+                </select>
+            </div>
+            <div class="form-group col d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary" style="background: #fe9900;color: #4e4e4e;">Filter</button>
+            </div>
+        </div>
+    </form>`;
+        document.getElementById("custom-filter-div").innerHTML += filter_form;
+
+        $('#reservation').daterangepicker();
+        let req_date = '{{ req_date }}';
+        if (req_date !== "") {
+            $('#reservation').val(req_date);
+        }
+        $('.select2').select2(
+            {
+                tags: true
+            }
+        );
+
+
+    </script>
+    <script>
+        const visitor_details_modal = (jsonresponse) => {
+            const fields = {
+                visitor_address: "Visitor Address",
+                visitor_organization: "Visitor Organization",
+                visitor_email: "Visitor Email",
+                to_which_department: "Department",
+                visitor_purpose: "Purpose",
+                checkout_time: "Checkout Time"
+            };
+
+            let address = "";
+            let organization = "";
+            let email = "";
+            let department = "";
+            let purpose = "";
+            let checkout_time=""
+
+            for (const field in fields) {
+                if (jsonresponse[field]) {
+                    const fieldValue = getFieldDisplayValue(jsonresponse[field]);
+                    const fieldLabel = fields[field];
+
+                    if (field === "visitor_address") {
+                        address = `<p class="card-text-sm text-sm"><b>${fieldLabel}:</b> ${fieldValue}</p>`;
+                    } else if (field === "visitor_organization") {
+                        organization = `<p class="card-text text-sm"><b>${fieldLabel}:</b> ${fieldValue}</p>`;
+                    } else if (field === "visitor_email") {
+                        email = `<p class="card-text text-sm"><b>${fieldLabel}:</b> ${fieldValue}</p>`;
+                    } else if (field === "to_which_department") {
+                        department = `<p class="card-text text-sm"><b>${fieldLabel}:</b> ${fieldValue}</p>`;
+                    } else if (field === "visitor_purpose") {
+                        purpose = `<p class="card-text text-sm"><b>${fieldLabel}:</b> ${fieldValue}</p>`;
+                    } else if (field === "checkout_time") {
+                        purpose = `<p class="card-text text-sm"><b>${fieldLabel}:</b> ${fieldValue}</p>`;
+                    }
+                }
+            }
+
+            const modalContent = document.createElement('div');
+            modalContent.innerHTML = `
+    <div class="row">
+      
+      <div class="col-md-6 text-sm">
+        <div class="card">
+          <div class="card-body" style="border: 1px solid black;border-radius: 10px;background:#ebebeb;min-height: 300px">
+            ${address}
+            <hr>
+            ${organization}
+            <hr>
+            ${email}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 text-sm">
+        <div class="card">
+          <div class="card-body" style="border: 1px solid black;border-radius: 10px;background:#ebebeb;min-height: 300px">
+            ${department}
+            <hr>
+            ${purpose}
+            <hr>
+            ${checkout_time}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+            
+            Swal.fire({
+                title: "<h2 style='text-align:center'>Visitor Details</h2>",
+                backdrop: true,
+                allowOutsideClick: false,
+                html: modalContent,
+                showCloseButton: true,
+                showConfirmButton: false,
+                width: "700px",
+                padding: "10px solid black",
+                timer: 0, // Set the timer to 0 to stop the toast animation
+            });
+        };
+
+
+        const getFieldDisplayValue = (fieldValue) => {
+            if (typeof fieldValue === "object" && fieldValue !== null) {
+                if (Array.isArray(fieldValue)) {
+                    return fieldValue.map((item) => item.purpose_name).join(", ");
+                } else if ("department_name" in fieldValue) {
+                    return fieldValue.department_name;
+                } else if ("purpose_name" in fieldValue) {
+                    return fieldValue.purpose_name;
+                }
+            }
+            return fieldValue;
+        };
+
+        const visitor_details_fetch = (visitor_id) => {
+            //console.log(lead_id)
+            //alert("lead_id")
+            fetch('{% url "visitor.details"  %}?id=' + visitor_id).then(
+                (response) => {
+                    if (response.ok) {
+                        console.log(response.headers.get('content-type'));
+                        return response.json()
+
+
+                    }
+                    throw new Error("error fetching data")
+
+                },
+                (networkerror) => {
+                    console.log(networkerror.message)
+                }
+            ).then(
+                (jsonresponse) => {
+                    //console.log(jsonresponse)
+                    visitor_details_modal(jsonresponse)
+
+                }
+            )
+        }
+        const visitor_details = (event, visitor_id) => {
+            event.preventDefault();
+            visitor_details_fetch(visitor_id);
+        }
+    </script>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+                }
+              }
+            }
+            return cookieValue;
+          }
+
+        const otp_code_fetch = (otpValue, visitor_id) => {
+            const otp_code = {
+                otp_code: otpValue,
+              }
+            const data = JSON.stringify(otp_code);
+            const path = window.location.host
+            fetch("https://" + path + "/otp-system/validate-otp/"+ visitor_id,
+            {
+                method: "POST",
+                credentials: 'same-origin',
+                headers:{
+                    'X-CSRFToken':getCookie("csrftoken"),
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+                body:data
+            }
+            ).then(
+                response => {
+                    return response.json()
+                }
+            ).then(data => {
+                if (data['is_verified']) {
+                    // Show success message if is_verified is true
+                    Swal.fire({
+                        title: 'Success',
+                        text: 'The Checkout validation is successful',
+                        icon: 'success',
+                    });visitor_status_id = 'visitor-status' + visitor_id;
+                    old_visitor_status = document.getElementById(visitor_status_id);
+                    new_visitor_status = `
+                    <div style='display: flex; align-items: center; background-color: #e0e0e0; border-radius: 20px; padding: 4px 8px;'>
+                        <i class="fas fa-door-closed" style="color: red;"></i>
+                        <span style='font-size: 0.6rem; margin-left: 3px;'>DEPARTED</span>
+                    </div>
+                    `;
+                    old_visitor_status.outerHTML = new_visitor_status;
+                    
+                    document.getElementById('checkout_button').hidden = true
+
+                } else {
+                    // Show error message if is_verified is false
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'The visiting code is invalid',
+                        icon: 'error',
+                    });
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+            })
+        }
+        const otp_input_modal = (visitor_id) => {
+            Swal.fire({
+                title: "<h2 style='text-align:center'>Visitor Checkout</h2>",
+                showCloseButton: true,
+                showConfirmButton: false,
+                padding: "10px solid black",
+                allowOutsideClick: false,
+                timer: 0, // Set the timer to 0 to stop the toast animation
+                html: `
+                <div style="text-align: center;">
+                    <p>Enter the six-digit visiting code:</p>
+                    <input type="text" class="form-control" id="otpInput" style="width: 200px; padding: 6px; margin: 0 auto;">
+                    <button id="submitBtnForOtp" class="btn btn-primary" style="margin-top: 10px;">Submit</button>
+                </div>
+            `,
+            didOpen: () => {
+                    document.getElementById('submitBtnForOtp').addEventListener('click', (event) => {
+                        const otpValue = document.getElementById('otpInput').value;
+                        event.preventDefault()
+                        otp_code_fetch(otpValue, visitor_id)
+                    });
+                }
+            });
+        }
+        const visitor_checkout = (event, visitor_id) =>{
+            event.preventDefault();
+            otp_input_modal(visitor_id)
+        }
+    </script>
+    {% endblock js_script %}

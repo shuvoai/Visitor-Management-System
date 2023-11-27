@@ -1,0 +1,63 @@
+name: 🚀 aamarPay Visitor Management System [STAGING]
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  code_check:
+    name: 🔒 Source Code Check (Flake8)
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛖 Get latest code
+        uses: actions/checkout@v3
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 🧱 Install Dependencies
+        run: |
+          pip install flake8
+          pip install -r requirements.txt
+
+      - name: 👟 Run Flake8
+        run: flake8 --exclude venv,migrations --max-line-length 250 --ignore=F
+
+  aamarpay_vms_deployment:
+    needs: code_check
+    name: 🎉 Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
+          known_hosts: 'vms_deploy'
+
+      - name: 🚚 Adding Known Hosts
+        run: ssh-keyscan -p ${{ secrets.STAGING_SSH_PORT }} -H ${{ secrets.STAGING_SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: 🚀 Run Deployment Script
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.STAGING_SSH_HOST }}
+          username: ${{ secrets.STAGING_SSH_USER }}
+          key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.STAGING_SSH_PORT }}
+          command_timeout: 30m
+          script: |
+            cd /www/docker_projects/aamarpay-visitor-management-system
+            git stash
+            git pull origin staging
+            chmod +x deployment/*
+            chmod +x deploy-staging.sh
+            sh deploy-staging.sh
+            
+            rsync -arvz --update --progress /www/docker_projects/aamarpay-visitor-management-system/* /www/docker_projects/aamarpay-visitor-management-system-public
+            cd /www/docker_projects/aamarpay-visitor-management-system-public
+            chmod +x deployment/*
+            chmod +x deploy-staging-public.sh
+            sh deploy-staging-public.sh

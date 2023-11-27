@@ -1,0 +1,116 @@
+{%  extends  'dashboard/base.html' %}
+{% load static %}
+{% load templatetags %}
+
+{% block incomeform %}
+{% endblock incomeform %}
+
+{%block pagetitle %}
+Permisssion List
+{% endblock pagetitle %}
+
+{% block head %}
+<link rel="stylesheet" href="//cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="{% static 'authentication/css/responsive.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'authentication/css/buttons.bootstrap4.min.css' %}">
+{% endblock %}
+
+{% block pagination %}
+<li class="breadcrumb-item"><a href="{% url 'permissions' %}">Permisssion List</a></li>
+{% endblock pagination %}
+
+{% block recent_sales %}
+
+    <div class="row">
+        <div class="col-12">
+    <div class="card recent-sales overflow-auto">
+
+        <div class="card-body">
+            <h5 class="card-title">Permisssion List<span> |</span></h5>  
+            <table class="datatables-basic table table-striped table-sm" id="pm_table"> 
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Permissions</th>
+                        <th>Codename</th>
+                        {% for gr in user_groups %}
+                            <th>{{ gr.name }}</th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for permission in permission_list %}
+                            <tr class="small">
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ permission.name }}</td>
+                                <td>{{ permission.content_type.app_label }}.{{ permission.codename }}</td>
+                                {% for group in user_groups %}
+
+                                    <td class="text-center">
+                                        <div class="form-check col-12 col-lg-3">
+                                            <input class="form-check-input" type="checkbox" id="customCheck{{ permission.id }}_{{ group.id }}_{{ forloop.counter }}" value="{{ group.name }}#{{ permission.codename }}#{% group_has_permission group.name permission.codename %}" onchange="changePermission(this.value, 'customCheck{{ permission.id }}_{{ group.id }}_{{ forloop.counter }}', '{{ permission.name }}')"{% if not perms.auth.change_permission %}disabled{% endif %} {% group_has_permission group.name permission.codename %}
+                                            
+                                           >
+                                        </div>
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+
+        </div>
+
+    </div>
+</div>
+</div>
+</div>
+{% endblock recent_sales %}
+
+{% block js_script %} 
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+function changePermission(object_val, object_id, good_name) {
+    var parts = object_val.split('#');
+    var permission = '';
+    var group_name = parts[0];
+    var codename = parts[1];
+    var set_val = '';
+    if (parts[2] === '') {
+        {#Unchecked#}
+        {#Request to activate permission#}
+        permission = 1;
+        set_val = parts[0] + "#" + parts[1] + "#checked";
+    } else {
+        {#Checked#}
+        {#Request to disbale permission#}
+        permission = 0;
+        set_val = parts[0] + "#" + parts[1] + "#";
+    }
+    axios({
+        method: 'post',
+        url: '{% url 'permissions' %}',
+        headers: {
+            'X-CSRFToken': '{{csrf_token}}'
+        },
+        data: {
+            'group_name': group_name,
+            'codename': codename,
+            'permission': permission
+        }
+    }).then(function (response) {
+        if (response.status === 200) {
+            if (response.data.error) {
+                showError('Something went wrong!');
+            } else {
+                showSuccess(good_name + ' permission has been updated.');
+                $("#" + object_id).val(set_val);
+            }
+        } else {
+            showError(response.statusText);
+        }
+    }).catch((err) => {
+        showError(err.message);
+    });
+}
+</script>
+{% endblock js_script %}

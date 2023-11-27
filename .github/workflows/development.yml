@@ -1,0 +1,27 @@
+name: 🚀 aamarPay Visitor Management System [DEVELOPMENT]
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  code_check:
+    name: 🔒 Source Code Check (Flake8)
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛖 Get latest code
+        uses: actions/checkout@v3
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 🧱 Install Dependencies
+        run: |
+          pip install flake8
+          pip install -r requirements.txt
+
+      - name: 👟 Run Flake8
+        run: flake8 --exclude venv,migrations --max-line-length 250 --ignore=F

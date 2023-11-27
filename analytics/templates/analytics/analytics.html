@@ -1,0 +1,552 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{%block pagetitle %}
+Visitor Analytics
+{% endblock pagetitle %}
+
+{% block pagination %}
+<li class="breadcrumb-item"><a href="{% url 'analyticsview' %}">Analytics</a></li>
+{% endblock pagination %}
+
+
+
+{% block incomeform %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card info-card sales-card">
+            <div class="card-body">
+                <h5 class="card-title">Number of Visitors | <span> On-Site </span>
+                </h5>
+                <div class="d-flex flex-column">
+                    <span class="text-muted small align-self-center">
+                        <h1 class="align-self-center display-1" id="visitor_on_site_count"> {{visitors_on_site}} </h1>
+                    </span>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <!--div class="col-md-6">
+        <div class="card info-card sales-card">
+        </div>
+    </div-->
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card info-card sales-card">
+
+            <div class="filter">
+                <a class="icon" href="#" data-bs-toggle="dropdown"><img
+                        src=" {% static 'dashboard/img/icons8-funnel-50.png' %}" alt="Profile" class="" height="20px"
+                        width="20px"></a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                        <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#" id="num_of_visitors_today">Today</a></li>
+                    <li><a class="dropdown-item" href="#" id="num_of_visitors_this_month">This Month</a></li>
+                    <li><a class="dropdown-item" href="#" id="num_of_visitors_this_year">This Year</a></li>
+                </ul>
+            </div>
+
+            <div class="card-body">
+                <h5 class="card-title">Number of Visitors | <span id="numberOfVisitorsCardPeriod"> This Month </span>
+                </h5>
+                <div class="d-flex flex-column">
+                    <span class="text-muted small align-self-center">
+                        <h1 class="align-self-center display-1" id="numberOfVisitorsCard"> {{number_of_visitors}} </h1>
+                    </span>
+                </div>
+
+
+
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card info-card sales-card">
+            <div class="card-body">
+                <h5 class="card-title">Visitor Change </h5>
+                <div class="d-flex flex-column">
+                    {% if visitor_change > 0 %}
+                    <span class="text-muted small align-self-center">
+                        <h1 class="align-self-center display-3"> {{visitor_change}} % </h1>
+                        <div style="text-align: center;">increase from {{previous_month}}</div>
+                    </span>
+                    {% elif visitor_change < 0 %} <span class="text-muted small align-self-center">
+                        <h1 class="align-self-center display-3"> {{visitor_change}} %</h1>
+                        <div style="text-align: center;">decrease from {{previous_month}}</div>
+                        </span>
+
+
+                        {% else %}
+
+                        <span class="text-muted small align-self-center">
+                            <h1 class="align-self-center display-1"> {{visitor_change}} </h1>
+                        </span>
+                        {% endif %}
+
+                </div>
+
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock incomeform %}
+<!-- Left side columns -->
+
+{% block income_expense %}
+<div class="row">
+    <div class=" col-md-6">
+        <div class="card info-card sales-card">
+            <div class="filter">
+                <a class="icon" href="#" data-bs-toggle="dropdown"><img
+                        src=" {% static 'dashboard/img/icons8-funnel-50.png' %}" alt="Profile" class="" height="20px"
+                        width="20px"></a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                        <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#" id="department_wise_num_of_visitors_today">Today</a></li>
+                    <li><a class="dropdown-item" href="#" id="department_wise_num_of_visitors_this_month">This Month</a>
+                    </li>
+                    <li><a class="dropdown-item" href="#" id="department_wise_num_of_visitors_this_year">This Year</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Department-wise Number of Visitors | <span
+                        id="department_wise_numberOfVisitorsCardPeriod"> This Month </span></h5>
+                <canvas id="doughnutChart" style="max-height: 400px;"></canvas>
+
+            </div>
+
+        </div>
+    </div><!-- End Sales Card -->
+    <div class=" col-md-6">
+        <div class="card info-card sales-card">
+            <div class="filter">
+                <a class="icon" href="#" data-bs-toggle="dropdown"><img
+                        src=" {% static 'dashboard/img/icons8-funnel-50.png' %}" alt="Profile" class="" height="20px"
+                        width="20px"></a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                        <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#" id="reason_wise_num_of_visitors_today">Today</a></li>
+                    <li><a class="dropdown-item" href="#" id="reason_wise_num_of_visitors_this_month">This Month</a>
+                    </li>
+                    <li><a class="dropdown-item" href="#" id="reason_wise_num_of_visitors_this_year">This Year</a></li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Reason-wise Number of visitors | <span
+                        id="reason_wise_numberOfVisitorsCardPeriod"> This Month </span></h5>
+                <canvas id="polarChart" style="max-height:400px;"></canvas>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Revenue Card -->
+<div class="row">
+    <div class="col-12">
+        <div class="card info-card sales-card">
+            <div class="card-body">
+                <h5 class="card-title">Monthly Number of visitor <span>|</span></h5>
+                <canvas id="lineChart5" style="max-height:300px;"></canvas>
+                <script>
+                    document.addEventListener("DOMContentLoaded", () => {
+                        new Chart(document.querySelector('#lineChart5'), {
+                            type: 'line',
+                            data: {
+                                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                                datasets: [{
+                                    label: 'Number of Visitors',
+                                    data: [{% for i in visitors_per_month %} {{ i.1}},{% endfor %}],
+                        fill: false,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                                    }]
+                                },
+                        options: {
+                        animations: {
+                            tension: {
+                                duration: 6000,
+                                easing: 'easeInOutElastic',
+                                from: 1,
+                                to: 0,
+                                loop: true
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                            });
+                        });
+
+                </script>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+{% endblock income_expense %}
+
+<!-- Reports -->
+
+
+
+<!--div></div-->
+{% block recent_sales %}
+
+{% endblock recent_sales %}
+
+
+<!-- Recent Sales -->
+{% block date_query %}
+{% endblock date_query %}
+
+
+{% block js_script %}
+<script type="text/javascript" src=" {% static 'analytics/js/analytics.js' %} "></script>
+
+<script>
+    const generateResonWiseVisitorPolarChart = (jsonresponse) => {
+        // console.log(jsonresponse)
+        length = jsonresponse.length
+        labels = [];
+        values = [];
+        for (i = 0; i < length; i++) {
+            labels.push(jsonresponse[i].visitor_purpose__purpose_name
+            );
+            values.push(jsonresponse[i].count);
+        }
+
+        //console.log(labels)
+        //console.log(values)
+        var existingChart = Chart.getChart('polarChart');
+
+        // If the chart exists, destroy it
+        if (existingChart) {
+            existingChart.destroy();
+        }
+
+        existingChart = new Chart(document.getElementById("polarChart"), {
+            type: 'polarArea',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Reason",
+                    backgroundColor: ["#3a90cd", "#8e5ea2", "#3bba9f", "#e8c3b9", "#c45850", "#CD9C5C", "#40E0D0"],
+                    data: values
+                }]
+            },
+            options: {
+                animation: {
+                    animateRotate: true,
+                    animateScale: true
+                },
+                legend: {
+                    display: true
+                },
+                title: {
+                    display: true,
+                    text: 'U.S population'
+                },
+
+            }
+        });
+
+        //console.log(existingChart);
+    }
+    const resonWiseVisitorPolarchart = () => {
+        fetch('{% url 'resonwisevisitorchart' %}').then(
+            (response) => {
+                if (response.ok) {
+                    return response.json()
+                }
+                throw new Error("error fetching data")
+
+            },
+            (networkerror) => {
+                console.log(networkerror.message)
+            }
+        ).then(
+            (jsonresponse) => {
+                generateResonWiseVisitorPolarChart(jsonresponse)
+            }
+        )
+    }
+    const resonWiseVisitor = (event) => {
+        event.preventDefault();
+        resonWiseVisitorPolarchart();
+    }
+    document.addEventListener("DOMContentLoaded", resonWiseVisitor);
+</script>
+<script>
+    const changepolarChartCard = (data) => {
+        data.jsonresponse.then(function (result) {
+            generateResonWiseVisitorPolarChart(result);
+        });
+        let reason_wise_numberOfVisitors = document.getElementById("reason_wise_numberOfVisitorsCardPeriod");
+        reason_wise_numberOfVisitors.textContent = toTitleCase(data.period.replace("_", " "));
+    }
+
+    const reasonWisePolarAreafetch = (period) => {
+        fetch('{% url 'resonwisevisitorchart' %}?period=' + period).then(
+            (response) => {
+                if (response.ok) {
+                    return {
+                        "jsonresponse": response.json(),
+                        "period": period
+                    }
+                }
+                throw new Error("error fetching data")
+            },
+            (networkerror) => {
+                console.log(networkerror.message)
+            }
+        ).then(
+            (jsonresponse) => {
+                console.log(jsonresponse)
+                changepolarChartCard(jsonresponse)
+            }
+        )
+    }
+
+    const reason_wise_num_of_visitors_today_handler = (event) => {
+        event.preventDefault();
+        reasonWisePolarAreafetch("today");
+    }
+    const reason_wise_num_of_visitors_this_month_handler = (event) => {
+        event.preventDefault();
+        reasonWisePolarAreafetch("this_month");
+    }
+    const reason_wise_num_of_visitors_this_year_handler = (event) => {
+        event.preventDefault();
+        reasonWisePolarAreafetch("this_year");
+    }
+
+    let reason_wise_num_of_visitors_today = document.getElementById("reason_wise_num_of_visitors_today");
+    let reason_wise_num_of_visitors_this_month = document.getElementById("reason_wise_num_of_visitors_this_month");
+    let reason_wise_num_of_visitors_this_year = document.getElementById("reason_wise_num_of_visitors_this_year");
+    reason_wise_num_of_visitors_today.addEventListener("click", reason_wise_num_of_visitors_today_handler);
+    reason_wise_num_of_visitors_this_month.addEventListener("click", reason_wise_num_of_visitors_this_month_handler);
+    reason_wise_num_of_visitors_this_year.addEventListener("click", reason_wise_num_of_visitors_this_year_handler);
+</script>
+
+<script>
+    const generate_department_wise_visitor_doughnut_chart = (jsonresponse) => {
+        console.log(jsonresponse)
+        length = jsonresponse.length
+        labels = [];
+        values = [];
+        for (i = 0; i < length; i++) {
+            labels.push(jsonresponse[i].to_which_department__department_name
+            );
+            values.push(jsonresponse[i].count);
+        }
+        var existingChart = Chart.getChart('doughnutChart');
+
+        // If the chart exists, destroy it
+        if (existingChart) {
+            existingChart.destroy();
+        }
+        console.log(labels)
+        console.log(values)
+        existingChart = new Chart(document.getElementById("doughnutChart"), {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Department",
+                    backgroundColor: ["#3a90cd", "#8e5ea2", "#3bba9f", "#e8c3b9", "#c45850", "#CD9C5C", "#40E0D0"],
+                    data: values
+                }]
+            },
+            options: {
+                legend: {
+                    display: true
+                },
+                title: {
+                    display: true,
+                    text: 'U.S population'
+                }
+            }
+        });
+
+    }
+    const department_wise_visitor_doughnut_chart = () => {
+        fetch('{% url 'departmentWisevisitorchart' %}').then(
+            (response) => {
+                if (response.ok) {
+                    return response.json()
+                }
+                throw new Error("error fetching data")
+
+            },
+            (networkerror) => {
+                console.log(networkerror.message)
+            }
+        ).then(
+            (jsonresponse) => {
+                generate_department_wise_visitor_doughnut_chart(jsonresponse)
+            }
+        )
+    }
+    const department_wise_visitor = (event) => {
+        event.preventDefault();
+        department_wise_visitor_doughnut_chart();
+    }
+    document.addEventListener("DOMContentLoaded", department_wise_visitor);
+</script>
+
+<script>
+    const changeDoughnutCharCard = (data) => {
+        data.jsonresponse.then(function (result) {
+            generate_department_wise_visitor_doughnut_chart(result);
+        });
+        let department_wise_numberOfVisitors = document.getElementById("department_wise_numberOfVisitorsCardPeriod");
+        department_wise_numberOfVisitors.textContent = toTitleCase(data.period.replace("_", " "));
+    }
+
+    const departmentWiseDoughnutChartFetch = (period) => {
+        fetch('{% url 'departmentWisevisitorchart' %}?period=' + period).then(
+            (response) => {
+                if (response.ok) {
+                    return {
+                        "jsonresponse": response.json(),
+                        "period": period
+                    }
+                }
+                throw new Error("error fetching data")
+            },
+            (networkerror) => {
+                console.log(networkerror.message)
+            }
+        ).then(
+            (jsonresponse) => {
+                console.log(jsonresponse)
+                changeDoughnutCharCard(jsonresponse)
+            }
+        )
+    }
+
+    const department_wise_num_of_visitors_today_handler = (event) => {
+        event.preventDefault();
+        departmentWiseDoughnutChartFetch("today");
+    }
+    const department_wise_num_of_visitors_this_month_handler = (event) => {
+        event.preventDefault();
+        departmentWiseDoughnutChartFetch("this_month");
+    }
+    const department_wise_num_of_visitors_this_year_handler = (event) => {
+        event.preventDefault();
+        departmentWiseDoughnutChartFetch("this_year");
+    }
+
+    let department_wise_num_of_visitors_today = document.getElementById("department_wise_num_of_visitors_today");
+    let department_wise_num_of_visitors_this_month = document.getElementById("department_wise_num_of_visitors_this_month");
+    let department_wise_num_of_visitors_this_year = document.getElementById("department_wise_num_of_visitors_this_year");
+    department_wise_num_of_visitors_today.addEventListener("click", department_wise_num_of_visitors_today_handler);
+    department_wise_num_of_visitors_this_month.addEventListener("click", department_wise_num_of_visitors_this_month_handler);
+    department_wise_num_of_visitors_this_year.addEventListener("click", department_wise_num_of_visitors_this_year_handler);
+</script>
+
+
+<script>
+    function toTitleCase(str) {
+        return str.replace(/\w\S*/g, function (txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
+    }
+    const changeNumberOfVisitorsCard = (data) => {
+        let numberOfVisitorsCard = document.getElementById("numberOfVisitorsCard");
+        let numberOfVisitorsCardPeriod = document.getElementById("numberOfVisitorsCardPeriod");
+        data.jsonresponse.then(function (result) {
+            numberOfVisitorsCard.textContent = result.count
+        });
+        numberOfVisitorsCardPeriod.textContent = toTitleCase(data.period.replace("_", " "));
+    }
+    const num_of_visitors_today_fetch = (period) => {
+        fetch('{% url 'number_of_visitors_per_month' %}?period=' + period).then(
+            (response) => {
+                if (response.ok) {
+                    return {
+                        "jsonresponse": response.json(),
+                        "period": period
+                    }
+                }
+                throw new Error("error fetching data")
+            },
+            (networkerror) => {
+                console.log(networkerror.message)
+            }
+        ).then(
+            (jsonresponse) => {
+                changeNumberOfVisitorsCard(jsonresponse)
+
+            }
+        )
+    }
+
+    const num_of_visitors_today_handler = (event) => {
+        event.preventDefault();
+        num_of_visitors_today_fetch("today");
+    }
+    const num_of_visitors_this_month_handler = (event) => {
+        event.preventDefault();
+        num_of_visitors_today_fetch("this_month");
+    }
+    const num_of_visitors_this_year_handler = (event) => {
+        event.preventDefault();
+        num_of_visitors_today_fetch("this_year");
+    }
+
+    let num_of_visitors_today = document.getElementById("num_of_visitors_today");
+    let num_of_visitors_this_month = document.getElementById("num_of_visitors_this_month");
+    let num_of_visitors_this_year = document.getElementById("num_of_visitors_this_year");
+    num_of_visitors_today.addEventListener("click", num_of_visitors_today_handler);
+    num_of_visitors_this_month.addEventListener("click", num_of_visitors_this_month_handler);
+    num_of_visitors_this_year.addEventListener("click", num_of_visitors_this_year_handler);
+</script>
+
+<script>
+    let url = new URL(window.location.href);
+    const analytics_socket = new WebSocket(
+        'ws://' + window.location.host + '/ws/analytics/visitor-on-site/'
+    );
+    const incoming_message_from_analytics_server_handler = (event) => {
+        const data = JSON.parse(event.data);
+        const visitor_count = data.visitor_count;
+        visitor_on_site_count_card = document.getElementById('visitor_on_site_count');
+        visitor_on_site_count_card.textContent = visitor_count
+    }
+    const analytics_socket_close_handler = (event) => {
+        console.log("Analytics socket closed unexpectedly");
+    };
+    analytics_socket.addEventListener('message', incoming_message_from_analytics_server_handler);
+    analytics_socket.addEventListener('close', analytics_socket_close_handler);
+</script>
+
+
+
+{% endblock js_script %}
